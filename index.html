@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project 1 by Ryan Logsdon</title>
+    <meta charset="UTF-8">
+    <link rel="icon" href="data:;base64,iVBORwOKGO=" />
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>   
+<h1 style="text-align: center; font-family: system-ui"> Project 1 -- Out of This World </h1>
+    <p style="text-align: center; font-family: system-ui">By: Ryan Logsdon</p> 
+    <hr class="rounded">
+    <!-- Add HTML content, SVG drawing area, ... -->
+    <div class="svg-container">
+        <svg id="planetByStar"></svg>
+        <svg id="planetByPlanet"></svg>
+        <div class="source">
+            <svg id="starType"></svg>
+            <p style="text-align: center; font-family: system-ui">
+            Learn More About Star Types <a href="https://en.wikipedia.org/wiki/Stellar_classification" target="_blank">Stellar Classification</a>
+            </p> 
+        </div>
+        <div class="source">
+            <svg id="discoveryMethod"></svg>
+            <p style="text-align: center; font-family: system-ui">
+            Learn More About Discover Methods <a href="https://en.wikipedia.org/wiki/Methods_of_detecting_exoplanets" target="_blank">Hunting Exoplanets</a>
+            </p> 
+        </div>
+        <svg id="habitable"></svg>
+    </div>
+    <hr class="rounded">
+    <!-- D3 bundle -->
+    <script src="js/d3.v6.min.js"></script>
+
+    <!-- Our JS code - INCLUDING the new files-->
+    <script src="js/main.js"></script>
+     
+    <!--<script src="js/timelineCircles.js"></script> -->
+    <script src="js/PlanetByStar.js"></script>
+    <script src="js/PlanetByPlanet.js"></script>
+    <script src="js/StarType.js"></script>
+    <script src="js/DiscoveryMethod.js"></script>
+    <script src="js/Habitable.js"></script>
+</body>
+</html>

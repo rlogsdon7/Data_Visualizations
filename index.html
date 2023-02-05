@@ -29,6 +29,35 @@
         <svg id="habitable"></svg>
     </div>
     <hr class="rounded">
+    <div class="histogram-line-container">
+        <svg id="histogram"></svg>
+        <svg id="line"></svg>
+    </div>
+    <div class="line-divider"></div>
+    <div class="timeline-container">
+     <svg id="timeline"></svg>
+     <p style="margin-top: 0px; margin-bottom: 0px; text-align: center;font-family: system-ui;">View By Star Type:</p>
+     <ul class="legend" style="margin-top: 9px; text-align: center;">
+        <li class="legend-btn" category="A"><span class="legend-symbol"></span> A</li>
+        <li class="legend-btn" category="F"><span class="legend-symbol"></span> F</li>
+        <li class="legend-btn" category="G"><span class="legend-symbol"></span> G</li>
+        <li class="legend-btn" category="K"><span class="legend-symbol"></span> K</li>
+        <li class="legend-btn" category="M"><span class="legend-symbol"></span> M</li>
+        <li class="legend-btn" category="N/A"><span class="legend-symbol"></span> N/A</li>
+        <li class="legend-btn" category="SUN"><span class="legend-symbol"></span> Sun</li>
+     </ul>
+     <div id="tooltip"></div>
+    </div>
+    <div class="line-divider"></div>
+    <div class="dataTable-container">
+        <h3  style="margin-top: 0px; margin-bottom: 0px; text-align: center; font-family: system-ui; font-weight: unset;">Exoplanet Data</h3>
+        <div id="dataTable"></div>
+    </div>
+
+
+
+
+
     <!-- D3 bundle -->
     <script src="js/d3.v6.min.js"></script>
 
@@ -41,5 +70,8 @@
     <script src="js/StarType.js"></script>
     <script src="js/DiscoveryMethod.js"></script>
     <script src="js/Habitable.js"></script>
+    <script src="js/Histogram.js"></script>
+    <script src="js/line.js"></script>
+    <script src="js/timelineCircles.js"></script>
 </body>
 </html>

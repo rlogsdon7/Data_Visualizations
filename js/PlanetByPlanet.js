@@ -4,7 +4,7 @@ class PlanetByPlanet {
       parentElement: _config.parentElement,
       containerWidth: _config.containerWidth || 500,
       containerHeight: _config.containerHeight || 140,
-      margin: { top: 40, bottom: 70, right: 50, left: 60 }
+      margin: { top: 40, bottom: 40, right: 50, left: 60 }
     }
     this.data = _data; 
 
@@ -17,6 +17,15 @@ console.log("Here16")
     vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
     vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
 
+    
+
+      vis.updateVis(); //call updateVis() at the end - we aren't using this yet. 
+  }
+/**
+   * Prepare the data and scales before we render it.
+   */
+  updateVis() {
+    let vis = this;
     vis.xScale = d3.scaleBand()
         .domain(vis.data.map(function(d) { return d.numPlanets; }))
         .range([0, vis.width])
@@ -58,7 +67,7 @@ console.log("Here16")
         .attr('class', 'axis y-axis');
     //Title
     vis.svg.append("text")
-       .attr('transform', `translate(${vis.width/2 - 100}, ${vis.config.margin.top -10 })`)
+       .attr('transform', `translate(${vis.width/2 - 100}, ${vis.config.margin.top -20 })`)
        .attr("font-size", "20px")
        .text("Exoplanets by Exoplanets in System")
        .style("font-family", "system-ui")
@@ -69,16 +78,41 @@ console.log("Here16")
       vis.colorPalette.domain( vis.data.map(function(d) { return d.numPlanets;}));
 
     //Add circles for each event in the data
-    vis.chart.selectAll('rect')
+    vis.rects = vis.chart.selectAll('rect')
       .data(vis.data)
       .enter()
       .append('rect')
       .attr('fill', (d) => vis.colorPalette(d.numPlanets) )
+      .attr('id', (d) => {
+        return "byPlan" + d.numPlanets}) 
       .attr('x', (d) => {
         return vis.xScale(d.numPlanets)}) 
       .attr('y', (d) => vis.yScale(d.count) ) 
       .attr('width', vis.xScale.bandwidth())
       .attr('height', (d) => vis.height - vis.yScale(d.count));
+
+    vis.rects
+          .on('mouseover', (event,d) => {
+            //console.log("mouse over! ");
+            //console.log(event);
+            //console.log(d);
+            //console.log("byPlan"+ d.numPlanets)
+        d3.select("#byPlan"+ d.numPlanets)
+            .style("filter", "brightness(70%)");
+          d3.select('#tooltip')
+            .style('display', 'block')
+            .style('left', event.pageX + 10 + 'px')   
+            .style('top', event.pageY + 'px')
+            .html(`
+              <div class="tooltip-title">Exoplanets in System: ${d.numPlanets}</div>
+              <div><i>Number of Exoplanets: ${d.count}</i></div>
+            `);
+        })
+        .on('mouseleave', () => {
+          d3.select('#tooltip').style('display', 'none');
+          d3.selectAll("rect")
+            .style("filter", "brightness(100%)");
+        });
 
     // X axis
     vis.svg.append('g')
@@ -89,7 +123,7 @@ console.log("Here16")
         .style("word-wrap", "break-word")
         .style("font-family", "system-ui")
         .style("color", "black")
-        .style("font-size", "18px")
+        .style("font-size", "12px")
         .attr("dx", "-0.3em")
         .attr("dy", "1em")
         .attr("transform", "rotate(0)")
@@ -101,7 +135,7 @@ console.log("Here16")
        .text("Number of Exoplanets in System")
        .style("font-family", "system-ui")
         .style("color", "black")
-        .style("font-size", "18px");
+        .style("font-size", "12px");
 
     // Add the y axis
     vis.svg.append('g')
@@ -123,16 +157,7 @@ console.log("Here16")
        .text("Number of Exoplanets")
        .style("font-family", "system-ui")
         .style("color", "black")
-        .style("font-size", "18px");
-
-      //updateVis(); //call updateVis() at the end - we aren't using this yet. 
-  }
-/**
-   * Prepare the data and scales before we render it.
-   */
-  updateVis() {
-    let vis = this;
-    
+        .style("font-size", "12px");
     
 
     vis.renderVis();
@@ -148,18 +173,4 @@ console.log("Here16")
 
    
   }
-}/*
- updateVis() {
-
-   
-   renderVis(); 
-
- }
-
- renderVis() { 
-
-  }
-
-
-
-}*/
+}

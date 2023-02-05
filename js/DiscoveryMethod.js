@@ -4,7 +4,7 @@ class DiscoveryMethod {
       parentElement: _config.parentElement,
       containerWidth: _config.containerWidth || 500,
       containerHeight: _config.containerHeight || 140,
-      margin: { top: 40, bottom: 70, right: 50, left: 60 }
+      margin: { top: 40, bottom: 40, right: 50, left: 60 }
     }
     this.data = _data; 
 
@@ -17,8 +17,18 @@ console.log("Here??")
     vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
     vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
     
+
+      vis.updateVis(); //call updateVis() at the end - we aren't using this yet. 
+  }
+/**
+   * Prepare the data and scales before we render it.
+   */
+  updateVis() {
+    let vis = this;
+    
+    
     vis.xScale = d3.scaleBand()
-        .domain(vis.data.map(function(d) { return d.discMethod; }))
+        .domain(vis.data.map(function(d) { return d.toolTip; }))
         .range([0, vis.width])
         .padding(0.4);
     
@@ -58,7 +68,7 @@ console.log("Here??")
         .attr('class', 'axis y-axis');
     //Title
     vis.svg.append("text")
-       .attr('transform', `translate(${vis.width/2 -98}, ${vis.config.margin.top -10 })`)
+       .attr('transform', `translate(${vis.width/2 -98}, ${vis.config.margin.top -20 })`)
        .attr("font-size", "20px")
        .text("Exoplanets by Discovery Method")
        .style("font-family", "system-ui")
@@ -69,30 +79,76 @@ console.log("Here??")
       vis.colorPalette.domain( vis.data.map(function(d) { return d.index;}));
 
     //Add circles for each event in the data
-    vis.chart.selectAll('rect')
+    vis.rects = vis.chart.selectAll('rect')
       .data(vis.data)
       .enter()
       .append('rect')
       .attr('fill', (d) => vis.colorPalette(d.index) )
       .attr('x', (d) => {
-        return vis.xScale(d.discMethod)}) 
+        return vis.xScale(d.toolTip)}) 
+      .attr('id', (d) => {
+        return "byDisc" + d.toolTip.replace(/\s/g, '')})  
       .attr('y', (d) => vis.yScale(d.count) ) 
       .attr('width', vis.xScale.bandwidth())
       .attr('height', (d) => vis.height - vis.yScale(d.count));
-
+    vis.rects
+          .on('mouseover', (event,d) => {
+            //console.log("mouse over! ");
+            //console.log(event);
+            console.log(d);
+            //console.log("byType"+ d.numPlanets)
+        d3.select("#byDisc" + d.toolTip.replace(/\s/g, ''))
+            .style("filter", "brightness(70%)");
+          d3.select('#tooltip')
+            .style('display', 'block')
+            .style('left', event.pageX + 10 + 'px')   
+            .style('top', event.pageY + 'px')
+            .html(`
+              <div class="tooltip-title">Discovery Method: ${d.toolTip}</div>
+              <div><i>Number of Exoplanets: ${d.count}</i></div>
+            `);
+        })
+        .on('mouseleave', () => {
+          d3.select('#tooltip').style('display', 'none');
+          d3.selectAll("rect")
+            .style("filter", "brightness(100%)");
+        });
     // X axis
-    vis.svg.append('g')
+    vis.label = vis.svg.append('g')
         .attr('transform', `translate(${vis.config.margin.left},${vis.height + vis.config.margin.top})`)
         .call(d3.axisBottom(vis.xScale))
         .selectAll("text")
-        .style("text-anchor", "end")
+        .style("text-anchor", "start")
         .style("word-wrap", "break-word")
         .style("font-family", "system-ui")
         .style("color", "black")
-        .style("font-size", "18px")
-        .attr("dx", "-.5em")
-        .attr("dy", ".4em")
-        .attr("transform", "rotate(-45)")
+        .style("font-size", "11px")
+        .attr("dx", ".40em")
+        .attr("dy", "-.6em")
+        .attr("transform", "rotate(-90)")
+
+    vis.label
+          .on('mouseover', (event,d) => {
+            //console.log("mouse over! ");
+            //console.log(event);
+            console.log(vis.data.filter(data => data.toolTip === d));
+            //console.log("byType"+ d.numPlanets)
+        d3.select("#byDisc" + d.replace(/\s/g, ''))
+            .style("filter", "brightness(70%)");
+          d3.select('#tooltip')
+            .style('display', 'block')
+            .style('left', event.pageX + 10 + 'px')   
+            .style('top', event.pageY + 'px')
+            .html(`
+              <div class="tooltip-title">Discovery Method: ${d}</div>
+              <div><i>Number of Exoplanets: ${vis.data.filter(data => data.toolTip === d)[0].count}</i></div>
+            `);
+        })
+        .on('mouseleave', () => {
+          d3.select('#tooltip').style('display', 'none');
+          d3.selectAll("rect")
+            .style("filter", "brightness(100%)");
+        });
 
     // X axis Label    
     vis.svg.append("text")
@@ -101,7 +157,7 @@ console.log("Here??")
        .text("Discovery Method")
        .style("font-family", "system-ui")
         .style("color", "black")
-        .style("font-size", "18px")
+        .style("font-size", "12px")
 
     // Add the y axisS
     vis.svg.append('g')
@@ -123,17 +179,7 @@ console.log("Here??")
        .text("Number of Exoplanets")
        .style("font-family", "system-ui")
         .style("color", "black")
-        .style("font-size", "18px");
-
-      //updateVis(); //call updateVis() at the end - we aren't using this yet. 
-  }
-/**
-   * Prepare the data and scales before we render it.
-   */
-  updateVis() {
-    let vis = this;
-    
-    
+        .style("font-size", "12px");
 
     vis.renderVis();
   }
@@ -148,18 +194,4 @@ console.log("Here??")
 
    
   }
-}/*
- updateVis() {
-
-   
-   renderVis(); 
-
- }
-
- renderVis() { 
-
-  }
-
-
-
-}*/
+}

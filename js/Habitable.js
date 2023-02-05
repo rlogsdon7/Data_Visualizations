@@ -4,7 +4,7 @@ class Habitable {
       parentElement: _config.parentElement,
       containerWidth: _config.containerWidth || 500,
       containerHeight: _config.containerHeight || 140,
-      margin: { top: 40, bottom: 70, right: 50, left: 60 }
+      margin: { top: 40, bottom: 40, right: 50, left: 60 }
     }
     this.data = _data; 
 
@@ -16,6 +16,15 @@ class Habitable {
 console.log("Here11111")
     vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
     vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
+    
+
+      vis.updateVis(); //call updateVis() at the end - we aren't using this yet. 
+  }
+/**
+   * Prepare the data and scales before we render it.
+   */
+  updateVis() {
+    let vis = this;
     
     vis.xScale = d3.scaleBand()
         .domain(vis.data.map(function(d) { return d.habType; }))
@@ -58,7 +67,7 @@ console.log("Here11111")
         .attr('class', 'axis y-axis');
     //Title
     vis.svg.append("text")
-       .attr('transform', `translate(${vis.width/2 - 60}, ${vis.config.margin.top -10 })`)
+       .attr('transform', `translate(${vis.width/2 - 60}, ${vis.config.margin.top -20 })`)
        .attr("font-size", "20px")
        .text("Exoplanets by Habitability")
        .style("font-family", "system-ui")
@@ -69,17 +78,48 @@ console.log("Here11111")
       vis.colorPalette.domain( vis.data.map(function(d) { return d.index;}));
 
     //Add circles for each event in the data
-    vis.chart.selectAll('rect')
+    vis.rects = vis.chart.selectAll('rect')
       .data(vis.data)
       .enter()
       .append('rect')
       .attr('fill', (d) => vis.colorPalette(d.index) )
       .attr('x', (d) => {
         return vis.xScale(d.habType)}) 
+      .attr('id', (d) => {
+        return "byHab" + d.index})  
       .attr('y', (d) => vis.yScale(d.count) ) 
       .attr('width', vis.xScale.bandwidth())
       .attr('height', (d) => vis.height - vis.yScale(d.count));
 
+      vis.rects
+          .on('mouseover', (event,d) => {
+            //console.log("mouse over! ");
+            //console.log(event);
+            console.log(d);
+            //console.log("byType"+ d.numPlanets)
+        d3.select("#byHab" + d.index)
+            .style("filter", "brightness(70%)");
+          d3.select('#tooltip')
+            .style('display', 'block')
+            .style('left', function(data){
+                console.log(d.habType)
+                let xVal = event.pageX + 10 + 'px';
+                if(d.habType == "Uninhabitable"){
+                    console.log(d.habType)
+                    xVal = event.pageX - 100 + 'px'
+                }
+                return xVal})   
+            .style('top', event.pageY + 'px')
+            .html(`
+              <div class="tooltip-title"> ${d.habType}</div>
+              <div><i>Number of Exoplanets: ${d.count}</i></div>
+            `);
+        })
+        .on('mouseleave', () => {
+          d3.select('#tooltip').style('display', 'none');
+          d3.selectAll("rect")
+            .style("filter", "brightness(100%)");
+        });
     // X axis
     vis.svg.append('g')
         .attr('transform', `translate(${vis.config.margin.left},${vis.height + vis.config.margin.top})`)
@@ -89,7 +129,7 @@ console.log("Here11111")
         .style("word-wrap", "break-word")
         .style("font-family", "system-ui")
         .style("color", "black")
-        .style("font-size", "18px")
+        .style("font-size", "12px")
         .attr("dx", "-0em")
         .attr("dy", "1em")
         .attr("transform", "rotate(0)")
@@ -101,7 +141,7 @@ console.log("Here11111")
        .text("Habitability")
        .style("font-family", "system-ui")
         .style("color", "black")
-        .style("font-size", "18px");
+        .style("font-size", "12px");
 
     // Add the y axisS
     vis.svg.append('g')
@@ -123,16 +163,7 @@ console.log("Here11111")
        .text("Number of Exoplanets")
        .style("font-family", "system-ui")
         .style("color", "black")
-        .style("font-size", "18px");
-
-      //updateVis(); //call updateVis() at the end - we aren't using this yet. 
-  }
-/**
-   * Prepare the data and scales before we render it.
-   */
-  updateVis() {
-    let vis = this;
-    
+        .style("font-size", "12px");
     
 
     vis.renderVis();
@@ -148,18 +179,4 @@ console.log("Here11111")
 
    
   }
-}/*
- updateVis() {
-
-   
-   renderVis(); 
-
- }
-
- renderVis() { 
-
-  }
-
-
-
-}*/
+}

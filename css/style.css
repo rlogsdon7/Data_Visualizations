@@ -106,3 +106,98 @@ hr.rounded {
   margin: 5px 0 0 0;
   padding-left: 20px;
 }
+.tooltip {
+  display: none;
+  position: absolute;
+  z-index: 1;
+}
+
+.line-divider {
+  height: 50vh;
+  width: 8px;
+  background-color: #5082b6;
+  border-radius: 3px;
+  display: inline-block;
+}
+.histogram-line-container {
+    display: flex;
+    flex-direction: column;
+    width: 33.33%;
+    float: left;
+}
+.timeline-container {
+     width: 33.33%;
+       margin: 0 auto;
+}
+.histogram-line-container, .timeline-container, .line-divider, .dataTable-container {
+    display: inline-block;
+    vertical-align: top;
+}
+
+
+/* Legend */
+.legend {
+  margin: 20px 0;
+  list-style: none;
+  padding: 0;
+}
+.legend-btn {
+  display: inline-block;
+  margin: 0 20px 0 0;
+  cursor: pointer;
+  transition: all ease-in-out 200ms;
+}
+.legend-btn:hover.legend-btn.inactive:hover  {
+  /*opacity: 1.0;*/
+}
+.legend-btn.inactive {
+  opacity: 0.3;
+}
+.legend-symbol {
+  width: 12px;
+  height: 12px;
+  margin-right: 3px;
+  display: inline-block;
+}
+.legend-btn[category="A"] .legend-symbol {
+  background: #1b9e77;
+}
+.legend-btn[category="F"] .legend-symbol {
+  background: #d95f02;
+}
+.legend-btn[category="G"] .legend-symbol {
+  background: #7570b3;
+}
+.legend-btn[category="K"] .legend-symbol {
+  background: #e7298a;
+}
+.legend-btn[category="M"] .legend-symbol {
+  background: #66a61e;
+}
+.legend-btn[category="N/A"] .legend-symbol {
+  background: #ebbc35;
+}
+.legend-btn[category="SUN"] .legend-symbol {
+  background: #89CFF0;
+}
+
+
+
+
+  .bodyTable td {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .bodyTable tr {
+    height: 40px;
+  }
+
+  .bodyTable tr:hover {
+    background-color:grey;
+  }
+
+  .scroll {
+    overflow: auto;
+  }

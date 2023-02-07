@@ -1,1 +1,2 @@
-# D3 Project Starter Template
+# Project 1 -- Out of this World
+## By: Ryan Logsdon

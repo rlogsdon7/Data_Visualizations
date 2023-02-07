@@ -56,12 +56,17 @@ class Histogram {
    */
   updateVis() {
     let vis = this;
+    vis.svg.selectAll('.y-axis').remove();
+    vis.svg.selectAll('.x-axis').remove();
+    vis.svg.selectAll('.chart').remove();
+    vis.svg.selectAll('.plan').remove();
     // X axis: scale and draw:
       var x = d3.scaleLinear()
-          .domain([0,  d3.max( vis.data, d => d.sy_dist)])     // can use this instead of 1000 to have the max of data: d3.max(data, function(d) { return +d.price })
+          .domain([0,  d3.max( vis.data, d => parseFloat(d.sy_dist))])
           .range([0, vis.width])
           //.padding(0.4);
       vis.svg.append("g")
+      .attr('class', 'x-axis')
           .attr('transform', `translate(${vis.config.margin.left},${vis.height + vis.config.margin.top})`)
           .call(d3.axisBottom(x));
 
@@ -69,38 +74,39 @@ class Histogram {
       var histogram = d3.histogram()
           .value(function(d) { return d.sy_dist; })   // I need to give the vector of value
           .domain(x.domain())  // then the domain of the graphic
-          .thresholds(x.ticks(70)); // then the numbers of bins
+          .thresholds(x.ticks(30)); // then the numbers of bins
 
       // And apply this function to data to get the bins
       var bins = histogram(vis.data);
 
+      let max = d3.max(bins, function(d) { return d.length; })
+      if(max==0){
+        max = 1
+      }
       // Y axis: scale and draw:
       var y = d3.scaleLinear()
-          .range([vis.height, 0]);
-          y.domain([0, d3.max(bins, function(d) { return d.length; })]);   // d3.hist has to be called before the Y axis obviously
+          .range([vis.height, 0])
+          .domain([0, max]);   // d3.hist has to be called before the Y axis obviously
       vis.svg.append("g")
+          .attr('class', 'y-axis')
           .attr('transform', `translate(${vis.config.margin.left}, ${vis.config.margin.top})`)
           .call(d3.axisLeft(y));
 
       // append the bar rectangles to the svg element
       vis.rects = vis.svg.selectAll("rect")
           .data(bins)
-          .enter()
-          .append("rect")
-            .attr("x", 1)
+          .join("rect")
+            .attr("x", 0)
+            .attr('class', 'plan')
             .attr("transform", function(d) { 
                     let xVal = x(d.x0) + vis.config.margin.left;
-                    let yVal = y(d.length) + vis.config.margin.top;
+                    let yVal = vis.height + vis.config.margin.top;
                 return "translate(" + xVal + "," + yVal + ")"; })
-            .attr("width", function(d) { return x(d.x1) - x(d.x0) -1 ; })
-            .attr("height", function(d) { return vis.height - y(d.length); })
+            .attr("width", function(d) { return x(d.x1) - x(d.x0) ; })
+            .attr("height", 0)
             .style("fill", "#1b9e77")
      vis.rects
           .on('mouseover', (event,d) => {
-            //console.log("mouse over! ");
-            //console.log(event);
-            console.log(d);
-            //console.log(htmltext)
           d3.select('#tooltip')
             .style('display', 'block')
             .style('left', x(d.x0) + vis.config.margin.left + 'px')   
@@ -113,6 +119,13 @@ class Histogram {
         .on('mouseleave', () => {
           d3.select('#tooltip').style('display', 'none');
         });
+      vis.rects.transition()
+        .duration(1000)
+        .attr('height', (d) => vis.height - y(d.length))
+        .attr("transform", function(d) { 
+                    let xVal = x(d.x0) + vis.config.margin.left;
+                    let yVal = y(d.length) + vis.config.margin.top;
+                return "translate(" + xVal + "," + yVal + ")"; })
     
 
     vis.renderVis();
@@ -128,18 +141,4 @@ class Histogram {
 
    
   }
-}/*
- updateVis() {
-
-   
-   renderVis(); 
-
- }
-
- renderVis() { 
-
-  }
-
-
-
-}*/
+}

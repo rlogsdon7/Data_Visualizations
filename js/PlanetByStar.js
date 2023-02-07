@@ -1,5 +1,5 @@
 class PlanetByStar {
-  constructor(_config, _data) {
+  constructor(_config, _data,_refresh) {
     this.config = {
       parentElement: _config.parentElement,
       containerWidth: _config.containerWidth || 500,
@@ -7,7 +7,7 @@ class PlanetByStar {
       margin: { top: 40, bottom: 40, right: 50, left: 60 }
     }
     this.data = _data; 
-
+    this.refresh = _refresh
     this.initVis();
   }
 
@@ -16,7 +16,43 @@ class PlanetByStar {
 
     vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
     vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
+ 
 
+
+    // Define size of SVG drawing area
+    vis.svg = d3.select(vis.config.parentElement)
+        .attr('width', vis.config.containerWidth)
+        .attr('height', vis.config.containerHeight);
+
+  //Title
+    vis.svg.append("text")
+       .attr('transform', `translate(${vis.width/2 - vis.config.margin.left}, ${vis.config.margin.top -20 })`)
+       .attr("font-size", "20px")
+       .text("Exoplanets by Stars in System")
+       .style("font-family", "system-ui")
+        .style("color", "black")
+        .style("font-size", "20px");
+
+  // Y axis Label    
+    vis.svg.append("text")
+       .attr("transform", "rotate(-90)")
+       .attr("x", -(vis.height/2) - vis.config.margin.top)
+       .attr("y", 15)
+       .style("text-anchor", "middle")
+       .text("Number of Exoplanets")
+
+       .style("font-family", "system-ui")
+        .style("color", "black")
+        .style("font-size", "12px");
+
+    // X axis Label    
+    vis.svg.append("text")
+       .attr("transform", `translate(${vis.width/2 + vis.config.margin.left},${vis.height + vis.config.margin.bottom + 35})`)
+       .style("text-anchor", "middle")
+       .text("Number of Stars in System")
+       .style("font-family", "system-ui")
+        .style("color", "black")
+        .style("font-size", "12px");
     
 
       vis.updateVis(); //call updateVis() at the end - we aren't using this yet. 
@@ -26,13 +62,18 @@ class PlanetByStar {
    */
   updateVis() {
     let vis = this;
+
+    vis.svg.selectAll('.y-axis').remove();
+    vis.svg.selectAll('.x-axis').remove();
+    vis.svg.selectAll('.chart').remove();
+    vis.svg.selectAll('.plan').remove();
     
     vis.xScale = d3.scaleBand()
         .domain(vis.data.map(function(d) { return d.numStars; }))
         .range([0, vis.width])
         .padding(0.4);
     vis.yScale = d3.scaleLinear()
-        .domain([d3.min( vis.data, d => d.starCount), d3.max( vis.data, d => d.starCount)])
+        .domain([0, d3.max( vis.data, d => d.starCount)])
         .range([vis.height, 0])
         .nice();
     // Initialize axes
@@ -47,14 +88,6 @@ class PlanetByStar {
         .tickSizeOuter(0)
         .tickPadding(10);
 
-    // Define size of SVG drawing area
-    vis.svg = d3.select(vis.config.parentElement)
-        .attr('width', vis.config.containerWidth)
-        .attr('height', vis.config.containerHeight);
-
-    // Construct a new ordinal scale with a range of ten categorical colours
-      vis.colorPalette = d3.scaleOrdinal(d3.schemeDark2);
-      vis.colorPalette.domain( vis.data.map(function(d) { return d.numStars;}));
 
     // Append group element that will contain our actual chart (see margin convention)
     vis.chart = vis.svg.append('g')
@@ -68,34 +101,24 @@ class PlanetByStar {
     // Append y-axis group
     vis.yAxisG = vis.chart.append('g')
         .attr('class', 'axis y-axis');
-    //Title
-    vis.svg.append("text")
-       .attr('transform', `translate(${vis.width/2 - vis.config.margin.left}, ${vis.config.margin.top -20 })`)
-       .attr("font-size", "20px")
-       .text("Exoplanets by Stars in System")
-       .style("font-family", "system-ui")
-        .style("color", "black")
-        .style("font-size", "20px");
+    
 
     //Add circles for each event in the data
     vis.rects = vis.chart.selectAll('rect')
       .data(vis.data)
       .join('rect')
-      .attr('fill', (d) => vis.colorPalette(d.numStars) )
+      .attr('class', 'plan')
+      .attr('fill', (d) => d.color )
       .attr('x', (d) => {
         return vis.xScale(d.numStars)}) 
       .attr('id', (d) => {
         return "byStar" + d.starCount}) 
-      .attr('y', (d) => vis.yScale(d.starCount) ) 
       .attr('width', vis.xScale.bandwidth())
-      .attr('height', (d) => vis.height - vis.yScale(d.starCount));
+      .attr('y', vis.height)
+      .attr('height', 0)
 
     vis.rects
           .on('mouseover', (event,d) => {
-            //console.log("mouse over! ");
-            console.log(event);
-            console.log(d);
-            //console.log(htmltext)
         d3.select("#byStar"+ d.starCount)
             .style("filter", "brightness(70%)");
           d3.select('#tooltip')
@@ -115,6 +138,7 @@ class PlanetByStar {
 
     // X axis
     vis.svg.append('g')
+        .attr('class', 'x-axis')
         .attr('transform', `translate(${vis.config.margin.left},${vis.height + vis.config.margin.top})`)
         .call(d3.axisBottom(vis.xScale))
         .selectAll("text")
@@ -127,17 +151,11 @@ class PlanetByStar {
         .attr("dy", "1em")
         .attr("transform", "rotate(0)")
 
-    // X axis Label    
-    vis.svg.append("text")
-       .attr("transform", `translate(${vis.width/2 + vis.config.margin.left},${vis.height + vis.config.margin.bottom + 35})`)
-       .style("text-anchor", "middle")
-       .text("Number of Stars in System")
-       .style("font-family", "system-ui")
-        .style("color", "black")
-        .style("font-size", "12px");
+   
 
     // Add the y axis
     vis.svg.append('g')
+        .attr('class', 'y-axis')
         .attr('transform', `translate(${vis.config.margin.left}, ${vis.config.margin.top})`)
         .call(d3.axisLeft(vis.yScale))
         .append("text")
@@ -147,17 +165,16 @@ class PlanetByStar {
          .attr("text-anchor", "end")
          .attr("stroke", "black")
     
-    // Y axis Label    
-    vis.svg.append("text")
-       .attr("transform", "rotate(-90)")
-       .attr("x", -(vis.height/2) - vis.config.margin.top)
-       .attr("y", 15)
-       .style("text-anchor", "middle")
-       .text("Number of Exoplanets")
+    vis.rects
+      .on('click', (event, d) => {
+        d3.select('#tooltip').style('display', 'none')
+        vis.refresh(d.numStars);
+      })
 
-       .style("font-family", "system-ui")
-        .style("color", "black")
-        .style("font-size", "12px");
+    vis.rects.transition()
+        .duration(1000)
+      .attr('y', (d) => vis.yScale(d.starCount) ) 
+      .attr('height', (d) => vis.height - vis.yScale(d.starCount));
 
     vis.renderVis();
   }

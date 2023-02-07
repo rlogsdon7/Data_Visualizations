@@ -133,7 +133,18 @@ hr.rounded {
     display: inline-block;
     vertical-align: top;
 }
-
+.top-container, .title-container {
+    display: inline-block;
+    vertical-align: top;
+}
+.top-container {
+     width: 33.33%;
+       margin: 0 auto;
+}
+.title-container {
+     width: 33.33%;
+       margin: 0 auto;
+}
 
 /* Legend */
 .legend {
@@ -163,41 +174,52 @@ hr.rounded {
   background: #1b9e77;
 }
 .legend-btn[category="F"] .legend-symbol {
-  background: #d95f02;
-}
-.legend-btn[category="G"] .legend-symbol {
   background: #7570b3;
 }
-.legend-btn[category="K"] .legend-symbol {
+.legend-btn[category="G"] .legend-symbol {
   background: #e7298a;
 }
-.legend-btn[category="M"] .legend-symbol {
+.legend-btn[category="K"] .legend-symbol {
   background: #66a61e;
 }
-.legend-btn[category="N/A"] .legend-symbol {
+.legend-btn[category="M"] .legend-symbol {
   background: #ebbc35;
+}
+.legend-btn[category="N/A"] .legend-symbol {
+  background: #d95f02;
 }
 .legend-btn[category="SUN"] .legend-symbol {
   background: #89CFF0;
 }
 
+.bodyTable td {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.bodyTable tr {
+  height: 40px;
+}
+.bodyTable tr:hover {
+  background-color:grey;
+}
+.scroll {
+  overflow: auto;
+}
 
-
-
-  .bodyTable td {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
-
-  .bodyTable tr {
-    height: 40px;
-  }
-
-  .bodyTable tr:hover {
-    background-color:grey;
-  }
-
-  .scroll {
-    overflow: auto;
-  }
+.button {
+  background-color: #1b9e7738;
+  border-color: #495057;
+  color: #495057;
+  padding: 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 28px;
+  margin-top: 20px;
+  border-radius: 25%;
+  font-family: "system-ui";
+}
+.button:hover {
+  filter: brightness(60%);
+}

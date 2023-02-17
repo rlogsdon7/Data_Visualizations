@@ -107,7 +107,13 @@ class Habitable {
     vis.rects = vis.chart.selectAll('rect')
       .data(vis.data)
       .join('rect')
-      .attr('fill', (d) => vis.colorPalette(d.index) )
+      .attr('fill', function(d){
+                let color = "#1b9e77"
+                if(d.habType == "Uninhabitable"){
+                    color = "#d95f02"
+                }
+                return color
+            })
       .attr('class', 'plan')
       .attr('x', (d) => {
         return vis.xScale(d.habType)}) 

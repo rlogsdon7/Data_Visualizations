@@ -4,7 +4,9 @@ class Histogram {
       parentElement: _config.parentElement,
       containerWidth: _config.containerWidth || 500,
       containerHeight: _config.containerHeight || 140,
-      margin: { top: 40, bottom: 60, right: 50, left: 60 }
+      margin: { top: 40, bottom: 60, right: 50, left: 60 },
+      contextMargin: {top: 160, bottom: 40, right: 50, left: 60},
+      contextHeight: 40
     }
     this.data = _data; 
 
@@ -13,10 +15,9 @@ class Histogram {
 
   initVis() {
     let vis = this;
-
-
-    vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
-    vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
+    vis.width = vis.config.width - vis.config.margin.left - vis.config.margin.right;
+    vis.height = vis.config.height - vis.config.margin.top - vis.config.margin.bottom;
+    vis.containerHeight = vis.config.height + vis.config.margin.top + vis.config.margin.bottom;
         
         // Define size of SVG drawing area
     vis.svg = d3.select(vis.config.parentElement)
@@ -48,7 +49,7 @@ class Histogram {
        .style("font-family", "system-ui")
         .style("color", "black")
         .style("font-size", "12px");
-
+      vis.first = true;
       vis.updateVis(); 
   }
 /**
@@ -62,7 +63,7 @@ class Histogram {
     vis.svg.selectAll('.plan').remove();
     // X axis: scale and draw:
       var x = d3.scaleLinear()
-          .domain([0,  d3.max( vis.data, d => parseFloat(d.sy_dist))])
+          .domain([0,  d3.max( vis.data, d => parseFloat(d.sy_dist))+ 5])
           .range([0, vis.width])
           //.padding(0.4);
       vis.svg.append("g")
@@ -78,7 +79,7 @@ class Histogram {
 
       // And apply this function to data to get the bins
       var bins = histogram(vis.data);
-
+      console.log(bins)
       let max = d3.max(bins, function(d) { return d.length; })
       if(max==0){
         max = 1
@@ -126,7 +127,6 @@ class Histogram {
                     let xVal = x(d.x0) + vis.config.margin.left;
                     let yVal = y(d.length) + vis.config.margin.top;
                 return "translate(" + xVal + "," + yVal + ")"; })
-    
 
     vis.renderVis();
   }

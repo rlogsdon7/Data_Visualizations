@@ -5,7 +5,9 @@ class Line {
       parentElement: _config.parentElement,
       containerWidth: _config.containerWidth || 500,
       containerHeight: _config.containerHeight || 140,
-      margin: { top: 40, bottom: 40, right: 50, left: 60 }
+      brushHeight: 70,
+      margin: { top: 40, bottom: 40, right: 50, left: 60 },
+      brushMargin: { top: 10, bottom: 10, right: 50, left: 60 }
     }
 
     this.data = _data;
@@ -21,8 +23,8 @@ class Line {
 
     //set up the width and height of the area where visualizations will go- factoring in margins               
     vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
-    vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
-
+    vis.height = vis.config.containerHeight - vis.config.brushHeight - vis.config.margin.top - vis.config.margin.bottom;
+    vis.brushHeight = vis.config.brushHeight - vis.config.brushMargin.top - vis.config.brushMargin.bottom;
     
 
     // Define size of SVG drawing area
@@ -75,6 +77,7 @@ class Line {
         .attr("y2", vis.height)
         .attr("stroke", "black")
         .attr("stroke-width", 1);
+
     vis.updateVis();
 
 
@@ -117,6 +120,10 @@ class Line {
         yMax = 1
     }
     //setup scales
+    vis.xScaleFocus = d3.scaleLinear()
+            .domain([min,max])
+            .range([0, vis.width]);
+
     vis.xScale = d3.scaleLog()
         .domain([min,max])
         .range([0, vis.width]);
@@ -124,13 +131,41 @@ class Line {
     vis.yScale = d3.scaleLinear()
         .domain([yMin,yMax])
         .range([vis.height, 0])
-        .nice(); //this just makes the y axes behave nicely by rounding up
+        .nice(); 
+
+    vis.yScaleFocus = d3.scaleLinear()
+            .domain([yMin,yMax])
+            .range([vis.brushHeight, 0])
+            .nice();
     
     // Initialize axes
     vis.xAxis = d3.axisBottom(vis.xScale)    
     .tickFormat(d3.format(".0f"))  // Add this line
     .ticks(8);
     vis.yAxis = d3.axisLeft(vis.yScale);
+
+    vis.xAxisFocus = d3.axisBottom(vis.xScaleFocus).tickSizeOuter(0);
+    vis.yAxisFocus = d3.axisLeft(vis.yScaleFocus);
+        // Append focus group with x- and y-axes
+        vis.focus = vis.svg.append('g')
+            .attr('transform', `translate(${vis.config.margin.left},${vis.height + vis.config.brushHeight})`);
+
+        vis.focus.append('defs')
+            .append('clipPath')
+            .attr('id', 'clip')
+            .append('rect')
+            .attr('width', vis.width)
+            .attr('height', vis.brushHeight);
+        
+        vis.focusLinePath = vis.focus.append('path')
+            .attr('class', 'chart-line');
+
+        vis.xAxisFocusG = vis.focus.append('g')
+            .attr('class', 'axis x-axis')
+            .attr('transform', `translate(0,${vis.height + vis.config.brushHeight})`);
+
+        vis.yAxisFocusG = vis.focus.append('g')
+            .attr('class', 'axis y-axis');
 
     // Append x-axis group and move it to the bottom of the chart
     vis.xAxisG = vis.chart.append('g')
@@ -143,8 +178,53 @@ class Line {
         .attr('class', 'axis y-axis')
         .call(vis.yAxis); 
 
-    if(d3.max(vis.data, d => d.cost)!=null){
-    vis.bisectDate = d3.bisector(vis.xValue).left;
+    vis.brushG = vis.chart.append('g')
+            .attr('class', 'brush x-brush')
+            .attr('transform', `translate(0,${vis.height + vis.brushHeight})`)
+
+
+
+        // Initialize brush component
+        vis.brush = d3.brushX()
+            .extent([[0, 0], [vis.width, vis.brushHeight]])
+            .on('brush', function({selection}) {
+              if (selection) vis.brushed(selection);
+            })
+            .on('end', function({selection}) {
+              if (!selection) vis.brushed(null);
+            });
+    // Set the scale input domains
+        vis.xScaleFocus.domain(d3.extent(vis.data, vis.xValue));
+        vis.yScaleFocus.domain(d3.extent(vis.data, vis.yValue));
+    vis.line = d3.line()
+            .x(d => vis.xScaleFocus(vis.xValue(d)))
+            .y(d => vis.yScaleFocus(vis.yValue(d)));
+
+    vis.area = d3.area()
+            .x(d => vis.xScaleContext(vis.xValue(d)))
+            .y1(d => vis.yScaleContext(vis.yValue(d)))
+            .y0(vis.config.contextHeight);
+
+    vis.focusLinePath
+        .datum(vis.data)
+        .attr('d', vis.focusline);
+
+    vis.contextAreaPath
+        .datum(vis.data)
+        .attr('d', vis.area);
+
+     vis.xAxisFocusG.call(vis.xAxisFocus);
+    vis.yAxisFocusG.call(vis.yAxisFocus);
+    vis.xAxisG.call(vis.xAxis);
+
+    // Update the brush and define a default position
+    const defaultBrushSelection = [vis.xScaleFocus(2015), vis.xScaleFocus.range()[1]];
+    vis.brushG
+        .call(vis.brush)
+        .call(vis.brush.move, defaultBrushSelection);
+
+    //if(d3.max(vis.data, d => d.cost)!=null){
+    /*vis.bisectDate = d3.bisector(vis.xValue).left;
    // Initialize area generator- helper function 
     vis.area = d3.area()
         .x(d => vis.xScale(vis.xValue(d)))
@@ -214,8 +294,6 @@ class Line {
           
           vis.tooltip.select('rect')
                 .attr('transform', `translate(${vis.xScale(d.year)},${0})`);
-        console.log(d.year)
-        console.log(max)
          if(d.year < max - 5){
            vis.tooltip.select('text')
               .attr('transform', `translate(${vis.xScale(d.year ) + 10},${(vis.yScale(d.cost) - 10)})`)
@@ -245,7 +323,7 @@ class Line {
     vis.linePath.transition()
         .duration(1000)
         .attr('d', vis.line);
-    }
+    }*/
 }
 
 
@@ -254,6 +332,24 @@ class Line {
 
   }
 
+brushed(selection) {
+    let vis = this;
 
+    // Check if the brush is still active or if it has been removed
+    if (selection) {
+      // Convert given pixel coordinates (range: [x0,x1]) into a time period (domain: [Date, Date])
+      const selectedDomain = selection.map(vis.xScale.invert, vis.xScale);
+
+      // Update x-scale of the focus view accordingly
+      vis.xScaleFocus.domain(selectedDomain);
+    } else {
+      // Reset x-scale of the focus view (full time period)
+      vis.xScaleFocus.domain(vis.xScale.domain());
+    }
+
+    // Redraw line and update x-axis labels in focus view
+    vis.focusLinePath.attr('d', vis.line);
+    vis.xAxisFocusG.call(vis.xAxisFocus);
+  }
 
 }

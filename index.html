@@ -45,21 +45,40 @@
      <svg id="timeline"></svg>
      <p style="margin-top: 0px; margin-bottom: 0px; text-align: center;font-family: system-ui;">View By Star Type:</p>
      <ul class="legend" style="margin-top: 9px; text-align: center;">
-        <li class="legend-btn" category="A"><span class="legend-symbol"></span> A</li>
-        <li class="legend-btn" category="F"><span class="legend-symbol"></span> F</li>
-        <li class="legend-btn" category="G"><span class="legend-symbol"></span> G</li>
-        <li class="legend-btn" category="K"><span class="legend-symbol"></span> K</li>
-        <li class="legend-btn" category="M"><span class="legend-symbol"></span> M</li>
-        <li class="legend-btn" category="N/A"><span class="legend-symbol"></span> N/A</li>
-        <li class="legend-btn" category="SUN"><span class="legend-symbol"></span> Sun</li>
+        <li id = "A" class="legend-btn" category="A"><span class="legend-symbol"></span> A</li>
+        <li id = "F" class="legend-btn" category="F"><span class="legend-symbol"></span> F</li>
+        <li id = "G" class="legend-btn" category="G"><span class="legend-symbol"></span> G</li>
+        <li id = "K" class="legend-btn" category="K"><span class="legend-symbol"></span> K</li>
+        <li id = "M" class="legend-btn" category="M"><span class="legend-symbol"></span> M</li>
+        <li id = "NA" class="legend-btn" category="N/A"><span class="legend-symbol"></span> N/A</li>
+        <li id = "SUN" class="legend-btn" category="SUN"><span class="legend-symbol"></span> Sun</li>
      </ul>
-     <div id="tooltip"></div>
+     
     </div>
     <div class="line-divider"></div>
     <div class="dataTable-container">
         <h3  style="margin-top: 0px; margin-bottom: 0px; text-align: center; font-family: system-ui; font-weight: unset;">Exoplanet Data</h3>
         <div id="dataTable"></div>
     </div>
+
+    <div id = "ExoplanetExplorer" class="box" style="display:none">
+        <div class="top-container2">
+            <h1 id="title" style="text-align: center; color: #5082b6; font-family: system-ui; margin-left: 100px;margin-top: 0px; flex: 1;">Exoplanet System Browser </h1>
+            <button id="button2" class="button2" onclick="hideBox()">Close</button>
+        </div>
+        <hr class="rounded" style="margin-top: 0px;">
+        <div class="ExoplanetExplorerData-container">
+            <div id = "ExoplanetExplorerData"  class="ExoplanetExplorerData"></div>
+            <div id = "starHolder" class = "starHolder">
+                <svg id="star"></svg>
+            </div>
+            <div id="dataTable2"></div>   
+        </div>
+        <div class="line-divider2"></div>
+        <div id = "ExoplanetExplorerChart"  class="ExoplanetExplorerChart">
+        </div>   
+    </div>
+    <div id="tooltip"></div>
 
 
 
@@ -77,8 +96,9 @@
     <script src="js/StarType.js"></script>
     <script src="js/DiscoveryMethod.js"></script>
     <script src="js/Habitable.js"></script>
-    <script src="js/Histogram.js"></script>
-    <script src="js/line.js"></script>
-    <script src="js/timelineCircles.js"></script>
+    <script src="js/HistogramBrush.js"></script>
+    <script src="js/lineBrush.js"></script>
+    <script src="js/timelineCirclesBrush.js"></script>
+    <script src="js/systemBrowser.js"></script>
 </body>
 </html>

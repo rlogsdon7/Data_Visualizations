@@ -146,6 +146,8 @@ hr.rounded {
        margin: 0 auto;
 }
 
+
+
 /* Legend */
 .legend {
   margin: 20px 0;
@@ -222,4 +224,101 @@ hr.rounded {
 }
 .button:hover {
   filter: brightness(60%);
+}
+.selected {
+  opacity: 1 !important;
+  stroke: black;
+  stroke-width: 1px;
+}
+
+.box {
+      width: 50.0vw;
+      height: 50.0vh;
+      background-color: white;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 5px solid steelblue;
+      border-radius: 15px;
+      box-sizing: border-box;
+      padding: 20px;
+      text-align: center;
+    }
+
+.button2 {
+  align-self: flex-start;
+  background-color: #ff00005c;
+  border-color: #495057;
+  color: #495057;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 18px;
+  margin-top: 10px;
+  border-radius: 5%;
+  font-family: "system-ui";
+}
+.button2:hover {
+  filter: brightness(60%);
+}
+
+.top-container2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0px;
+}
+
+
+
+.line-divider2 {
+    position: absolute;
+    top: 20%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    height: 2px;
+    background-color: #ddd;
+}
+
+.ExoplanetExplorerData-container {
+    position: absolute;
+    top: 20%;
+    left: 0;
+    right: 31.66%;
+    margin: 0 auto;
+    width: 66%;
+}
+.ExoplanetExplorerChart {
+    width: 70%;
+    margin: 0 auto;
+    position: absolute;
+    top: 20%;
+    left: 40%;
+    right: 0;
+
+}
+.line-divider2 {
+  height: 38vh;
+  width: 8px;
+  background-color: #5082b6;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.ExoplanetExplorerData-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#ExoplanetExplorerData, .starHolder {
+  flex-basis: 45%;
+  height: 13vh;
+  box-sizing: border-box;
+}
+
+#dataTable2 {
+  width: 100%;
 }

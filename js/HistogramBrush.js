@@ -160,7 +160,7 @@ vis.contextRects.selectAll('rect')
 
   .attr("width", function(d) { return vis.x(d.x1) - vis.x(d.x0) ; })
   .attr('height', (d) => vis.config.contextHeight + vis.height  + vis.config.margin.bottom - yContext(d.length))
-  .style("fill", "#7fe9c9")
+  .style("fill", "#9dc7f3")
 
 let defaultBrushSelection = [vis.xContext(0), vis.xContext.range()[1]];
 if(vis.data.length>0){
@@ -256,7 +256,7 @@ vis.tooltipTrackingArea = vis.svg.append('rect')
 
       .attr("width", function(d) { return vis.x(d.x1) - vis.x(d.x0) ; })
       .attr('height', 0)
-      .style("fill", "#1b9e77")
+      .style("fill", "#5082b6")
 
       vis.mainRects.transition()
         .duration(1000)

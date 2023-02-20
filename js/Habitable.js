@@ -112,7 +112,7 @@ class Habitable {
                 if(d.habType == "Uninhabitable"){
                     color = "#d95f02"
                 }
-                return color
+                return "#5082b6"
             })
       .attr('class', 'plan')
       .attr('x', (d) => {

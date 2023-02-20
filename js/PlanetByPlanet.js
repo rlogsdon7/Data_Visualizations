@@ -126,7 +126,7 @@ class PlanetByPlanet {
     vis.rects = vis.chart.selectAll('rect')
       .data(vis.data)
       .join('rect')
-      .attr('fill', (d) => d.color )
+      .attr('fill', "#5082b6")
       .attr('id', (d) => {
       return "byPlan" + d.numPlanets}) 
       .attr('x', (d) => {

@@ -100,7 +100,7 @@ class TimelineCircles {
 
   vis.rScale = d3.scaleLog()
     .domain(d3.extent(vis.data, d=> parseFloat(d.pl_bmasse)))
-    .range([5, 15]);
+    .range([10, 10]);
   let fakeData = vis.data
   let fakeData3 = vis.data
   let aCount = d3.count(fakeData.filter( d => d.starType == "A" ), d => d.sy_snum);

@@ -63,14 +63,14 @@ class DiscoveryMethod {
     vis.svg.selectAll('.plan').remove();
     
     
-    vis.xScale = d3.scaleBand()
+    vis.yScale = d3.scaleBand()
         .domain(vis.data.map(function(d) { return d.toolTip; }))
-        .range([0, vis.width])
+        .range([vis.height, 0])
         .padding(0.4);
     
-    vis.yScale = d3.scaleLinear()
+    vis.xScale = d3.scaleLinear()
         .domain([0, d3.max( vis.data, d => d.count)])
-        .range([vis.height, 0])
+        .range([0, vis.width])
         .nice();
     // Initialize axes
     vis.xAxis = d3.axisBottom(vis.xScale)
@@ -106,14 +106,14 @@ class DiscoveryMethod {
       .join('rect')
       .attr('class', 'plan')
       .attr('data',(d) => d.toolTip)
-      .attr('fill', (d) => d.color )
-      .attr('x', (d) => {
-        return vis.xScale(d.toolTip)}) 
+      .attr('fill', "#5082b6")
+      .attr('y', (d) => {
+        return vis.yScale(d.toolTip)}) 
       .attr('id', (d) => {
         return "byDisc" + d.toolTip.replace(/\s/g, '')})  
-      .attr('width', vis.xScale.bandwidth())
-      .attr('y', vis.height)
-      .attr('height', 0)
+      .attr('height', vis.yScale.bandwidth())
+      .attr('x', 0)
+      .attr('width', 0)
 
     vis.rects
           .on('mouseover', (event,d) => {
@@ -134,20 +134,19 @@ class DiscoveryMethod {
           d3.selectAll("rect")
             .style("filter", "brightness(100%)");
         });
-    // X axis
+    // y axis
     vis.label = vis.svg.append('g')
         .attr('class', 'x-axis')
-        .attr('transform', `translate(${vis.config.margin.left},${vis.height + vis.config.margin.top})`)
-        .call(d3.axisBottom(vis.xScale))
+        .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`)
+        .call(d3.axisLeft(vis.yScale))
         .selectAll("text")
         .style("text-anchor", "start")
         .style("word-wrap", "break-word")
         .style("font-family", "system-ui")
         .style("color", "black")
         .style("font-size", "11px")
-        .attr("dx", ".40em")
-        .attr("dy", "-.6em")
-        .attr("transform", "rotate(-90)")
+        .attr("dx", "1.2em")
+        .attr("dy", ".4em")
 
     vis.label
           .on('mouseover', (event,d) => {
@@ -170,11 +169,11 @@ class DiscoveryMethod {
         });
 
 
-    // Add the y axisS
+    // Add the x axisS
     vis.svg.append('g')
         .attr('class', 'y-axis')
-        .attr('transform', `translate(${vis.config.margin.left}, ${vis.config.margin.top})`)
-        .call(d3.axisLeft(vis.yScale))
+        .attr('transform', `translate(${vis.config.margin.left}, ${vis.config.margin.top + vis.height})`)
+        .call(d3.axisBottom(vis.xScale))
         .append("text")
          .attr("transform", "rotate(-90)")
          .attr("y", 6)
@@ -192,8 +191,7 @@ class DiscoveryMethod {
       })
     vis.rects.transition()
         .duration(1000)
-      .attr('y', (d) => vis.yScale(d.count) ) 
-      .attr('height', (d) => vis.height - vis.yScale(d.count));
+        .attr('width', (d) => vis.xScale(d.count));
 
     vis.renderVis();
   }

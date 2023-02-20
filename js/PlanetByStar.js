@@ -108,7 +108,7 @@ class PlanetByStar {
       .data(vis.data)
       .join('rect')
       .attr('class', 'plan')
-      .attr('fill', (d) => d.color )
+      .attr('fill', "#5082b6")
       .attr('x', (d) => {
         return vis.xScale(d.numStars)}) 
       .attr('id', (d) => {

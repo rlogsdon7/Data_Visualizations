@@ -2,4 +2,4 @@
 By: Ryan Logsdon
 
 This repo holds the code for Ryan Logsdon's Data Visualization Project 1. To access the live application, follow this link:
-Live Demo []
+[Live Application](https://rlogsdon7.github.io/Data_Visualizations/)

@@ -11,7 +11,9 @@ class Histogram {
 
     this.initVis();
   }
-
+  /**
+   * Define titles and lables, assign them to the SVG element
+   */
   initVis() {
     let vis = this;
 
@@ -52,8 +54,8 @@ class Histogram {
 vis.static = true;
       vis.updateVis(); 
   }
-/**
-   * Prepare the data and scales before we render it.
+  /**
+   * Prepare the data and scales and render it.
    */
   updateVis() {
     let vis = this;
@@ -213,19 +215,10 @@ vis.tooltipTrackingArea = vis.svg.append('rect')
         });
       }
         vis.xAxisG.call(vis.xAxis)
-    vis.renderVis();
   }
-
   /**
-   * This function contains the D3 code for binding data to visual elements
-   * Important: the chart is not interactive yet and renderVis() is intended
-   * to be called only once; otherwise new paths would be added on top
+   * Define brush interaction
    */
-  renderVis() {
-    let vis = this;
-
-   
-  }
   brushed(selection) {
     let vis = this;
 
